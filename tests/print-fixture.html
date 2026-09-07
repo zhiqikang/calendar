@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Paperday print fixture</title>
+    <link rel="stylesheet" href="../screen.css" />
+    <link rel="stylesheet" href="../print.css" media="print" />
+  </head>
+  <body data-paper="a4" data-orientation="portrait">
+    <main>
+      <section class="workspace">
+        <section class="preview-panel">
+          <div class="preview-scroll">
+            <div id="calendar-output"></div>
+          </div>
+        </section>
+      </section>
+    </main>
+    <style id="dynamic-page-style"></style>
+    <script type="module" src="./print-fixture.js"></script>
+  </body>
+</html>

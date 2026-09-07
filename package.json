@@ -1,0 +1,12 @@
+{
+  "name": "printable-calendar",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --experimental-strip-types --test tests/dateEngine.test.ts tests/holidays.test.js"
+  },
+  "engines": {
+    "node": ">=22.6.0"
+  }
+}

@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Paperday presentation tests</title>
+    <link id="screen-stylesheet" rel="stylesheet" href="../screen.css" />
+    <link id="print-stylesheet" rel="stylesheet" href="../print.css" media="print" />
+    <style>
+      .test-report { max-width: 760px; margin: 48px auto; padding: 24px; background: white; }
+      .test-report li { margin: 8px 0; }
+      .test-report .pass { color: #26704f; }
+      .test-report .fail { color: #b4422c; }
+    </style>
+  </head>
+  <body>
+    <main class="test-report">
+      <h1>Presentation separation tests</h1>
+      <p id="summary">Running…</p>
+      <ol id="results"></ol>
+    </main>
+    <script type="module" src="./presentation.test.js?v=2"></script>
+  </body>
+</html>

@@ -1,0 +1,86 @@
+/* Print presentation only. This stylesheet is loaded with media="print". */
+
+@page {
+  size: A4 portrait;
+  margin: 0;
+}
+
+:root,
+html,
+body {
+  margin: 0 !important;
+  padding: 0 !important;
+  background: white !important;
+}
+
+.no-print {
+  display: none !important;
+}
+
+main,
+.workspace,
+.preview-panel,
+.preview-scroll,
+#calendar-output {
+  display: block;
+  width: auto;
+  max-width: none;
+  height: auto;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  background: white;
+  box-shadow: none;
+}
+
+.calendar-page {
+  width: var(--page-width);
+  height: var(--page-height);
+  margin: 0;
+  padding: 12mm;
+  aspect-ratio: auto;
+  box-shadow: none;
+  break-inside: avoid;
+  page-break-inside: avoid;
+  print-color-adjust: exact;
+  -webkit-print-color-adjust: exact;
+}
+
+.calendar-page:not(:last-child) {
+  break-after: page;
+  page-break-after: always;
+}
+
+.calendar-header { padding-bottom: 5mm; }
+.calendar-eyebrow { font-size: 7pt; }
+.calendar-title { font-size: 28pt; }
+.calendar-brand { font-size: 6pt; }
+.weekday { padding: 2.2mm 1mm; font-size: 7pt; }
+.day-number { top: 2mm; right: 2.5mm; font-size: 9pt; }
+.holiday-labels { right: 2.5mm; bottom: 2mm; left: 2.5mm; font-size: 6.5pt; }
+.year-grid { gap: 4mm 5mm; }
+.multi-month-sheet .calendar-title { font-size: 24pt; }
+.multi-month-grid { gap: 5mm; }
+.mini-month-heading h3 { font-size: 10pt; }
+.mini-month-heading span { font-size: 5pt; }
+.mini-weekdays .weekday { padding: 1mm 0 0.5mm; font-size: 4pt; }
+.mini-days .day-number { font-size: 5pt; }
+.holiday-marker { width: 1mm; height: 1mm; }
+
+.multi-month-grid[data-month-count="2"] .mini-month-heading h3 { font-size: 17pt; }
+.multi-month-grid[data-month-count="2"] .mini-month-heading span { font-size: 7pt; }
+.multi-month-grid[data-month-count="2"] .mini-weekdays .weekday { font-size: 7pt; }
+.multi-month-grid[data-month-count="2"] .mini-days .day-number { font-size: 9pt; }
+
+.multi-month-grid[data-month-count="4"] .mini-month-heading h3 { font-size: 13pt; }
+.multi-month-grid[data-month-count="4"] .mini-month-heading span { font-size: 6pt; }
+.multi-month-grid[data-month-count="4"] .mini-weekdays .weekday { font-size: 5.5pt; }
+.multi-month-grid[data-month-count="4"] .mini-days .day-number { font-size: 7pt; }
+
+.multi-month-grid[data-month-count="6"] .mini-month-heading h3 { font-size: 11pt; }
+.multi-month-grid[data-month-count="6"] .mini-month-heading span { font-size: 5pt; }
+.multi-month-grid[data-month-count="6"] .mini-weekdays .weekday { font-size: 4.5pt; }
+.multi-month-grid[data-month-count="6"] .mini-days .day-number { font-size: 6pt; }

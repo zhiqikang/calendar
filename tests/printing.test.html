@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Paperday printing tests</title>
+    <style>
+      body { max-width: 760px; margin: 48px auto; padding: 0 24px; color: #173c34; font-family: system-ui, sans-serif; }
+      h1 { font-family: Georgia, serif; }
+      li { margin: 8px 0; }
+      .pass { color: #26704f; }
+      .fail { color: #b4422c; }
+      #fixture { display: none; }
+    </style>
+  </head>
+  <body>
+    <h1>Printing lifecycle tests</h1>
+    <p id="summary">Running…</p>
+    <ol id="results"></ol>
+    <div id="fixture"></div>
+    <script type="module" src="./printing.test.js"></script>
+  </body>
+</html>
