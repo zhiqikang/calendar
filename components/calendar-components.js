@@ -5,12 +5,14 @@ import {
   getMonthGrid,
   getWeekdayLabels,
 } from "../calendar.js";
+import { DEFAULT_STYLE } from "../styles.js";
 
 /**
  * @typedef {{ year: number, month: number }} MonthReference
  * @typedef {{ date: string, name: string }} Holiday
  * @typedef {{
  *   layout?: "monthly" | "two-month" | "four-month" | "six-month" | "yearly",
+ *   style?: string,
  *   weekStart?: "sunday" | "monday",
  *   showGrid?: boolean,
  *   shadeWeekends?: boolean
@@ -19,6 +21,7 @@ import {
 
 const DEFAULT_SETTINGS = Object.freeze({
   layout: "monthly",
+  style: DEFAULT_STYLE,
   weekStart: "sunday",
   showGrid: true,
   shadeWeekends: true,
@@ -226,6 +229,7 @@ export function MonthlyCalendarPage({
   const holidaysByDate = resolveHolidayIndex(holidays, holidayIndex);
   const title = `${MONTH_NAMES[month.month]} ${month.year}`;
   const page = element("article", "calendar-page monthly-sheet");
+  page.dataset.style = view.style;
   page.setAttribute("aria-label", `${title} calendar`);
   page.append(CalendarHeader({
     title,
@@ -275,9 +279,11 @@ export function MultiMonthCalendarPage({
     throw new TypeError("months must be a non-empty array");
   }
   months.forEach(assertMonth);
+  const view = withDefaults(settings);
   const holidaysByDate = resolveHolidayIndex(holidays, holidayIndex);
   const title = monthRangeTitle(months);
   const page = element("article", "calendar-page multi-month-sheet");
+  page.dataset.style = view.style;
   page.dataset.monthCount = String(months.length);
   page.setAttribute("aria-label", `${title} calendar`);
   page.append(CalendarHeader({
@@ -289,7 +295,7 @@ export function MultiMonthCalendarPage({
   grid.dataset.monthCount = String(months.length);
   months.forEach((month) => grid.append(MiniMonth({
     month,
-    settings,
+    settings: view,
     holidayIndex: holidaysByDate,
   })));
   page.append(grid);
@@ -312,15 +318,17 @@ export function YearlyCalendarPage({
     throw new TypeError("months must be a non-empty array");
   }
   months.forEach(assertMonth);
+  const view = withDefaults(settings);
   const holidaysByDate = resolveHolidayIndex(holidays, holidayIndex);
   const title = getCalendarTitle(months);
   const page = element("article", "calendar-page yearly-sheet");
+  page.dataset.style = view.style;
   page.setAttribute("aria-label", `${title} yearly calendar`);
   page.append(CalendarHeader({ eyebrow: "A year at a glance", title, brand }));
   const grid = element("div", "year-grid");
   months.forEach((month) => grid.append(MiniMonth({
     month,
-    settings,
+    settings: view,
     holidayIndex: holidaysByDate,
   })));
   page.append(grid);

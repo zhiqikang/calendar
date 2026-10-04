@@ -9,10 +9,17 @@ import {
   getLayoutDefinition,
 } from "./components/calendar-components.js";
 import { createPrintController } from "./printing.js";
+import {
+  CALENDAR_STYLES,
+  DEFAULT_STYLE,
+  getStyleDefinition,
+  isValidStyle,
+} from "./styles.js";
 
 const STORAGE_KEY = "paperday-settings-v1";
 const defaults = {
   layout: "monthly",
+  style: DEFAULT_STYLE,
   year: 2026,
   startMonth: 0,
   weekStart: "sunday",
@@ -25,6 +32,8 @@ const defaults = {
 const form = document.querySelector("#calendar-form");
 const output = document.querySelector("#calendar-output");
 const monthSelect = document.querySelector("#start-month");
+const styleSelect = document.querySelector("#style");
+const styleHelp = document.querySelector("#style-help");
 const yearInput = document.querySelector("#year");
 const printButton = document.querySelector("#print-button");
 const printStatus = document.querySelector("#print-status");
@@ -34,6 +43,17 @@ const printSummary = document.querySelector("#print-summary");
 const layoutHelp = document.querySelector("#layout-help");
 const dynamicPageStyle = document.querySelector("#dynamic-page-style");
 
+if (styleSelect) {
+  styleSelect.replaceChildren(
+    ...Object.values(CALENDAR_STYLES).map((style) => {
+      const option = document.createElement("option");
+      option.value = style.id;
+      option.textContent = style.label;
+      return option;
+    }),
+  );
+}
+
 MONTH_NAMES.forEach((month, index) => {
   const option = document.createElement("option");
   option.value = String(index);
@@ -41,12 +61,17 @@ MONTH_NAMES.forEach((month, index) => {
   monthSelect.append(option);
 });
 
+function normalizeStyle(value) {
+  return isValidStyle(value) ? value : defaults.style;
+}
+
 function loadSettings() {
   try {
     const stored = JSON.parse(localStorage.getItem(STORAGE_KEY));
     return {
       ...defaults,
       ...stored,
+      style: normalizeStyle(stored?.style),
       startMonth: normalizeStartMonth(stored?.startMonth),
     };
   } catch {
@@ -71,6 +96,7 @@ function setRadioValue(name, value) {
 function applySettingsToForm(settings) {
   yearInput.value = String(settings.year);
   form.elements.startMonth.value = String(settings.startMonth);
+  if (form.elements.style) form.elements.style.value = settings.style;
   form.elements.paper.value = settings.paper;
   form.elements.orientation.value = settings.orientation;
   form.elements.shadeWeekends.checked = settings.shadeWeekends;
@@ -85,6 +111,7 @@ function getSettings() {
 
   return {
     layout: data.get("layout"),
+    style: normalizeStyle(data.get("style")),
     year: Number.isFinite(parsedYear)
       ? Math.min(2200, Math.max(1900, parsedYear))
       : defaults.year,
@@ -104,11 +131,24 @@ function updatePageSize(settings) {
   dynamicPageStyle.textContent = `@page { size: ${paperName} ${settings.orientation}; margin: 0; }`;
 }
 
+function updateStyle(settings) {
+  document.body.dataset.style = settings.style;
+  const styleDefinition = getStyleDefinition(settings.style);
+  if (styleHelp) {
+    styleHelp.textContent = styleDefinition.description;
+  }
+  const themeMeta = document.querySelector('meta[name="theme-color"]');
+  if (themeMeta && styleDefinition.themeColor) {
+    themeMeta.setAttribute("content", styleDefinition.themeColor);
+  }
+}
+
 function render() {
   const settings = getSettings();
   const months = getMonthSequence(settings.year, settings.startMonth);
   localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
   updatePageSize(settings);
+  updateStyle(settings);
   output.replaceChildren(Calendar({ months, settings }));
 
   const layout = getLayoutDefinition(settings.layout);

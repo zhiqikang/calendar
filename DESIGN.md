@@ -53,6 +53,28 @@ Paperday is designed with an **editorial, tactile, artisanal stationery aestheti
 
 ---
 
+### Calendar Style Token System (`--cal-*`)
+
+Calendar sheets are styled via decoupled CSS custom properties scoped to `[data-style="<style-id>"]`:
+
+| Token Name | Warm Sunshine (Default) | High Contrast | Role / Usage |
+| :--- | :--- | :--- | :--- |
+| `--cal-font-display` | Cormorant Garamond, serif | Plus Jakarta Sans, sans-serif | Sheet title and mini-month headings |
+| `--cal-font-sans` | Plus Jakarta Sans, sans-serif | Plus Jakarta Sans, sans-serif | Day numbers, weekdays, brand, labels |
+| `--cal-paper` | `#fefdf9` (Washi White) | `#ffffff` (Pure White) | Sheet background fill |
+| `--cal-ink` | `#1e2229` (Sumi Ink) | `#000000` (Pure Black) | Primary typography |
+| `--cal-ink-soft` | `#4f5869` | `#222222` | Muted secondary copy |
+| `--cal-eyebrow` | `#9c651d` (Deep Brass) | `#000000` | Header eyebrow label |
+| `--cal-brand` | `#636f7e` | `#000000` | Header brand label & mini month year |
+| `--cal-divider` | `#6b7785` | `#000000` | Weekday header & mini-month divider |
+| `--cal-weekday` | `#556271` | `#000000` | Weekday header letters |
+| `--cal-grid` | `#c4beaf` | `#000000` | Day-cell borders |
+| `--cal-weekend` | `rgba(232, 236, 230, 0.65)` | `#e5e5e5` | Weekend cell background tint |
+| `--cal-holiday` | `#b33a22` | `#990000` | Holiday text labels |
+| `--cal-holiday-marker` | `#c84b31` | `#990000` | Compact holiday marker dots |
+
+---
+
 ## 3. Typography & Font Specifications
 
 Paperday uses a complementary dual-type pairing: **Cormorant Garamond** (with Georgia fallback) for editorial display elegance and **Plus Jakarta Sans** (with Inter / System Sans fallback) for clean, readable UI controls and tabular calendar numbers.

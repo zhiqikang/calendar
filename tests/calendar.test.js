@@ -269,6 +269,119 @@ test("defaults a new calendar to the 2026 starting year", async () => {
   }
 });
 
+test("applies style dataset attribute to calendar pages", () => {
+  const monthly = MonthlyCalendarPage({
+    month: { year: 2026, month: 0 },
+    settings: { style: "high-contrast" },
+  });
+  if (monthly.dataset.style !== "high-contrast") {
+    throw new Error("Monthly page did not apply style dataset");
+  }
+
+  const multi = MultiMonthCalendarPage({
+    months: getMonthSequence(2026, 0, 2),
+    settings: { style: "high-contrast" },
+  });
+  if (multi.dataset.style !== "high-contrast") {
+    throw new Error("Multi-month page did not apply style dataset");
+  }
+
+  const yearly = YearlyCalendarPage({
+    months: getMonthSequence(2026, 0),
+    settings: { style: "warm-sunshine" },
+  });
+  if (yearly.dataset.style !== "warm-sunshine") {
+    throw new Error("Yearly page did not apply default style dataset");
+  }
+});
+
+test("renders 02 · Style step above Paper settings and allows switching styles", async () => {
+  const storageKey = "paperday-settings-v1";
+  const frame = document.createElement("iframe");
+  frame.title = "Paperday application style test";
+  frame.hidden = true;
+  document.body.append(frame);
+  localStorage.removeItem(storageKey);
+
+  try {
+    const loaded = new Promise((resolve) => frame.addEventListener("load", resolve, { once: true }));
+    frame.src = `../index.html?style-test=${Date.now()}`;
+    await loaded;
+
+    const appDocument = frame.contentDocument;
+    const stepLabels = [...appDocument.querySelectorAll(".step-label")].map((el) => el.textContent.trim());
+    if (!stepLabels.includes("02 · Style")) {
+      throw new Error("Missing '02 · Style' step label");
+    }
+    if (!stepLabels.includes("03 · Paper")) {
+      throw new Error("Missing '03 · Paper' step label");
+    }
+    if (!stepLabels.includes("04 · Details")) {
+      throw new Error("Missing '04 · Details' step label");
+    }
+
+    const styleSelect = appDocument.querySelector("#style");
+    if (!styleSelect) throw new Error("Style select element is missing");
+    if (styleSelect.value !== "warm-sunshine") {
+      throw new Error("Style did not default to warm-sunshine");
+    }
+    if (appDocument.body.dataset.style !== "warm-sunshine") {
+      throw new Error("Body dataset style was not set to warm-sunshine");
+    }
+
+    const firstPage = appDocument.querySelector(".calendar-page");
+    if (firstPage?.dataset.style !== "warm-sunshine") {
+      throw new Error("Calendar page dataset style was not set to warm-sunshine");
+    }
+
+    styleSelect.value = "high-contrast";
+    styleSelect.dispatchEvent(new Event("change", { bubbles: true }));
+
+    if (appDocument.body.dataset.style !== "high-contrast") {
+      throw new Error("Changing style did not update body dataset");
+    }
+    const updatedPage = appDocument.querySelector(".calendar-page");
+    if (updatedPage?.dataset.style !== "high-contrast") {
+      throw new Error("Changing style did not update page dataset");
+    }
+
+    const saved = JSON.parse(localStorage.getItem(storageKey));
+    if (saved?.style !== "high-contrast") {
+      throw new Error("Selected style was not saved to localStorage");
+    }
+  } finally {
+    localStorage.removeItem(storageKey);
+    frame.remove();
+  }
+});
+
+test("recovers from invalid saved style in localStorage", async () => {
+  const storageKey = "paperday-settings-v1";
+  const frame = document.createElement("iframe");
+  frame.title = "Paperday application invalid style recovery test";
+  frame.hidden = true;
+  document.body.append(frame);
+  localStorage.setItem(storageKey, JSON.stringify({ style: "invalid-bogus-style" }));
+
+  try {
+    const loaded = new Promise((resolve) => frame.addEventListener("load", resolve, { once: true }));
+    frame.src = `../index.html?invalid-style-test=${Date.now()}`;
+    await loaded;
+
+    const appDocument = frame.contentDocument;
+    const styleSelect = appDocument.querySelector("#style");
+    if (styleSelect.value !== "warm-sunshine") {
+      throw new Error("Invalid style did not fall back to warm-sunshine");
+    }
+    if (appDocument.body.dataset.style !== "warm-sunshine") {
+      throw new Error("Body did not fall back to warm-sunshine");
+    }
+  } finally {
+    localStorage.removeItem(storageKey);
+    frame.remove();
+  }
+});
+
 const results = document.querySelector("#results");
 let passed = 0;
 

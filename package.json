@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node --experimental-strip-types --test tests/dateEngine.test.ts tests/holidays.test.js"
+    "test": "node --experimental-strip-types --test tests/dateEngine.test.ts tests/holidays.test.js tests/styles.test.js"
   },
   "engines": {
     "node": ">=22.6.0"
