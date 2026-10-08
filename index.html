@@ -18,28 +18,21 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22><rect x=%228%22 y=%2212%22 width=%2248%22 height=%2244%22 rx=%228%22 fill=%22%231a1f2c%22/><path d=%22M8 26h48%22 stroke=%22white%22 stroke-width=%224%22/><path d=%22M20 8v10M44 8v10%22 stroke=%22%23c0832b%22 stroke-width=%226%22 stroke-linecap=%22round%22/></svg>" />
     <link id="screen-stylesheet" rel="stylesheet" href="./screen.css?v=2" />
     <link id="print-stylesheet" rel="stylesheet" href="./print.css?v=2" media="print" />
+    <style id="dynamic-page-style"></style>
   </head>
   <body data-paper="a4" data-orientation="portrait">
     <header class="site-header no-print">
+      <h1 class="sr-only">Paperday — A calmer way to see the day</h1>
       <a class="brand" href="./" aria-label="Paperday home">
         <span class="brand-mark" aria-hidden="true">
           <span></span><span></span><span></span>
         </span>
         <span>Paperday</span>
       </a>
-      <p>Make room for the days that matter.</p>
+      <p class="site-slogan">A calmer way to see the day.</p>
     </header>
 
     <main>
-      <section class="intro no-print" aria-labelledby="page-title">
-        <p class="eyebrow">Printable calendar maker</p>
-        <h1 id="page-title">A calmer way to see your year.</h1>
-        <p class="intro-copy">
-          Choose a layout, tune the details, and print a calendar that feels at
-          home on your wall or desk.
-        </p>
-      </section>
-
       <section class="workspace" aria-label="Calendar maker">
         <aside class="control-panel no-print">
           <div class="panel-heading">
@@ -116,7 +109,7 @@
               </select>
             </label>
             <p class="field-help" id="style-help">
-              Warm linen paper with sumi ink and warm brass accents. Paperday classic.
+              Warm linen paper with sumi ink and warm brass accents.
             </p>
 
             <div class="divider" role="presentation"></div>
@@ -164,6 +157,23 @@
                 </span>
               </label>
             </div>
+
+            <div class="divider" role="presentation"></div>
+
+            <div class="holidays-field">
+              <p class="step-label">05 · Holidays</p>
+              <label for="holidays-input" class="sr-only">Holidays, one per line</label>
+              <textarea
+                id="holidays-input"
+                name="holidays"
+                rows="5"
+                placeholder="New Year: 1.1&#10;Christmas: 12.25&#10;Independence Day: 7.4"
+                spellcheck="false"
+                autocomplete="off"
+              ></textarea>
+              <p class="field-help" id="holidays-help" aria-live="polite"></p>
+              <p class="holiday-llm-prompt">Ask an AI to fill holidays: <span>List public holidays for [your country / region] in this exact format, one per line, no explanations:&#10;Holiday Name: YYYY-MM-DD</span></p>
+            </div>
           </form>
 
           <div class="print-actions">
@@ -201,7 +211,6 @@
       <p>Designed for thoughtful plans and ordinary Tuesdays.</p>
     </footer>
 
-    <style id="dynamic-page-style"></style>
     <script type="module" src="./app.js?v=5"></script>
   </body>
 </html>

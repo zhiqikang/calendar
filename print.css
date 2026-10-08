@@ -36,13 +36,38 @@ main,
   box-shadow: none;
 }
 
+body[data-paper="a4"][data-orientation="portrait"] {
+  --page-width: 210mm;
+  --page-height: 297mm;
+}
+
+body[data-paper="a4"][data-orientation="landscape"] {
+  --page-width: 297mm;
+  --page-height: 210mm;
+}
+
+body[data-paper="letter"][data-orientation="portrait"] {
+  --page-width: 8.5in;
+  --page-height: 11in;
+}
+
+body[data-paper="letter"][data-orientation="landscape"] {
+  --page-width: 11in;
+  --page-height: 8.5in;
+}
+
 .calendar-page {
-  width: var(--page-width);
-  height: var(--page-height);
-  margin: 0;
-  padding: 12mm;
-  aspect-ratio: auto;
-  box-shadow: none;
+  width: var(--page-width) !important;
+  height: var(--page-height) !important;
+  min-width: var(--page-width) !important;
+  min-height: var(--page-height) !important;
+  max-width: none !important;
+  max-height: none !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
+  padding: 12mm !important;
+  aspect-ratio: auto !important;
+  box-shadow: none !important;
   break-inside: avoid;
   page-break-inside: avoid;
   print-color-adjust: exact;
@@ -60,7 +85,7 @@ main,
 .calendar-brand { font-size: 6pt; }
 .weekday { padding: 2.2mm 1mm; font-size: 7pt; }
 .day-number { top: 2mm; right: 2.5mm; font-size: 9pt; }
-.holiday-labels { right: 2.5mm; bottom: 2mm; left: 2.5mm; font-size: 6.5pt; }
+.holiday-labels { right: 2.5mm; bottom: 2mm; left: 2.5mm; max-height: calc(100% - 6mm); font-size: 6.5pt; }
 .year-grid { gap: 4mm 5mm; }
 .multi-month-sheet .calendar-title { font-size: 24pt; }
 .multi-month-grid { gap: 5mm; }
@@ -84,3 +109,15 @@ main,
 .multi-month-grid[data-month-count="6"] .mini-month-heading span { font-size: 5pt; }
 .multi-month-grid[data-month-count="6"] .mini-weekdays .weekday { font-size: 4.5pt; }
 .multi-month-grid[data-month-count="6"] .mini-days .day-number { font-size: 6pt; }
+
+html,
+body {
+  width: auto !important;
+  height: auto !important;
+  min-height: 0 !important;
+  overflow: visible !important;
+}
+
+body {
+  display: block !important;
+}

@@ -107,7 +107,7 @@ font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
 | **Calendar Brand Stamp**| `.calendar-brand` | Plus Jakarta Sans (Sans) | `clamp(0.38rem, 0.8vw, 0.58rem)` | 800 | `0.18em` track, UPPERCASE |
 | **Weekday Header** | `.weekday` | Plus Jakarta Sans (Sans) | `clamp(0.46rem, 1.2vw, 0.74rem)`| 750 | `0.08em` track, UPPERCASE |
 | **Day Numbers** | `.day-number` | Plus Jakarta Sans (Sans) | `clamp(0.52rem, 1.4vw, 0.88rem)`| 600 | `tabular-nums` |
-| **Holiday Labels** | `.holiday-labels` | Plus Jakarta Sans (Sans) | `clamp(0.38rem, 0.9vw, 0.68rem)`| 700 | `1.15`, truncated ellipsis |
+| **Holiday Labels** | `.holiday-labels` | Plus Jakarta Sans (Sans) | `clamp(0.38rem, 0.9vw, 0.68rem)`| 700 | `1.15`, full name wrapped |
 | **Form Legends & Spans**| `legend`, `.field > span` | Plus Jakarta Sans (Sans) | `0.78rem` | 700 | Normal |
 | **Segmented Buttons** | `.segmented-control span`| Plus Jakarta Sans (Sans) | `0.83rem` (Compact: `0.76rem`) | 650 | Normal |
 | **Form Inputs / Selects**| `.field input`, `select` | Plus Jakarta Sans (Sans) | `0.84rem` | 400 | Normal |

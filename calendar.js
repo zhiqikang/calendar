@@ -63,6 +63,122 @@ function daysInGregorianMonth(year, month) {
   return [4, 6, 9, 11].includes(month) ? 30 : 31;
 }
 
+const FULL_DATE_PATTERN = /^(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})$/;
+const MONTH_DAY_PATTERN = /^(\d{1,2})[-/.](\d{1,2})$/;
+
+/**
+ * Parses holiday text input.
+ * Accepted formats per line:
+ * - "Holiday Name: YYYY-MM-DD" (or YYYY/MM/DD, YYYY.MM.DD, YYYY-M-D)
+ * - "Holiday Name: M.D" or "Holiday Name: MM.DD" (or M/D, M-D, using fallbackYear)
+ * Blank lines and lines without a colon are silently skipped.
+ * Returns { holidays: [{date, name}], errors: string[] }.
+ *
+ * @param {string} text
+ * @param {number} [fallbackYear=2026]
+ * @returns {{ holidays: Array<{ date: string, name: string }>, errors: string[] }}
+ */
+export function parseHolidays(text, fallbackYear = 2026) {
+  const holidays = [];
+  const errors = [];
+
+  if (!text || typeof text !== "string") {
+    return { holidays, errors };
+  }
+
+  const defaultYear = Number.isInteger(Number(fallbackYear))
+    ? Number(fallbackYear)
+    : 2026;
+
+  for (const raw of text.split("\n")) {
+    const line = raw.trim();
+    if (!line) continue;
+
+    const colonIdx = line.lastIndexOf(":");
+    if (colonIdx === -1) continue; // silently skip annotation-only lines
+
+    const lowerLine = line.toLowerCase();
+    if (
+      lowerLine.startsWith("note:") ||
+      lowerLine.startsWith("notes:") ||
+      lowerLine.startsWith("disclaimer:") ||
+      lowerLine.startsWith("source:")
+    ) {
+      continue; // silently skip annotation lines
+    }
+
+    let name = line.slice(0, colonIdx).trim();
+    name = name.replace(/^[-*•]\s+/, "").replace(/^\d+[.)]\s+/, "").trim();
+    name = name.replace(/^[*_`]+|[*_`]+$/g, "").trim();
+
+    let datePart = line.slice(colonIdx + 1).trim();
+    datePart = datePart.replace(/^[*_`]+|[*_`]+$/g, "").trim();
+
+    if (!name) {
+      errors.push(`Missing name before ":" in: ${line}`);
+      continue;
+    }
+
+    if (!datePart) {
+      if (
+        lowerLine.includes("holiday") ||
+        lowerLine.includes("list") ||
+        lowerLine.includes("public") ||
+        lowerLine.startsWith("here ")
+      ) {
+        continue; // silently skip intro header ending in colon
+      }
+      errors.push(`Missing date after ":" in: ${line}`);
+      continue;
+    }
+
+    let yearNum;
+    let monthNum;
+    let dayNum;
+
+    const fullMatch = FULL_DATE_PATTERN.exec(datePart);
+    if (fullMatch) {
+      yearNum = Number(fullMatch[1]);
+      monthNum = Number(fullMatch[2]);
+      dayNum = Number(fullMatch[3]);
+    } else {
+      const mdMatch = MONTH_DAY_PATTERN.exec(datePart);
+      if (mdMatch) {
+        yearNum = defaultYear;
+        monthNum = Number(mdMatch[1]);
+        dayNum = Number(mdMatch[2]);
+      } else {
+        errors.push(`Expected YYYY-MM-DD or M.D format in: ${line}`);
+        continue;
+      }
+    }
+
+    if (yearNum < 1 || yearNum > 9999) {
+      errors.push(`Invalid year in: ${line}`);
+      continue;
+    }
+
+    if (monthNum < 1 || monthNum > 12) {
+      errors.push(`Invalid month in: ${line}`);
+      continue;
+    }
+
+    const maxDays = daysInGregorianMonth(yearNum, monthNum);
+    if (dayNum < 1 || dayNum > maxDays) {
+      errors.push(`Invalid day in: ${line}`);
+      continue;
+    }
+
+    const yyyy = String(yearNum).padStart(4, "0");
+    const mm = String(monthNum).padStart(2, "0");
+    const dd = String(dayNum).padStart(2, "0");
+    holidays.push({ date: `${yyyy}-${mm}-${dd}`, name });
+  }
+
+  return { holidays, errors };
+}
+
+
 /**
  * Validates and groups exact-date holidays for fast calendar-cell lookups.
  * Multiple entries may share a date and retain their input order.

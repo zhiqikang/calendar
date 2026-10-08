@@ -2,6 +2,7 @@ import {
   MONTH_NAMES,
   getCalendarTitle,
   getMonthSequence,
+  parseHolidays,
 } from "./calendar.js";
 import {
   Calendar,
@@ -27,6 +28,7 @@ const defaults = {
   orientation: "portrait",
   shadeWeekends: true,
   showGrid: true,
+  holidaysText: "",
 };
 
 const form = document.querySelector("#calendar-form");
@@ -42,6 +44,8 @@ const previewBadge = document.querySelector("#preview-badge");
 const printSummary = document.querySelector("#print-summary");
 const layoutHelp = document.querySelector("#layout-help");
 const dynamicPageStyle = document.querySelector("#dynamic-page-style");
+const holidaysInput = document.querySelector("#holidays-input");
+const holidaysHelp = document.querySelector("#holidays-help");
 
 if (styleSelect) {
   styleSelect.replaceChildren(
@@ -64,6 +68,8 @@ MONTH_NAMES.forEach((month, index) => {
 function normalizeStyle(value) {
   return isValidStyle(value) ? value : defaults.style;
 }
+
+export { parseHolidays };
 
 function loadSettings() {
   try {
@@ -103,6 +109,7 @@ function applySettingsToForm(settings) {
   form.elements.showGrid.checked = settings.showGrid;
   setRadioValue("layout", settings.layout);
   setRadioValue("weekStart", settings.weekStart);
+  if (holidaysInput) holidaysInput.value = settings.holidaysText ?? "";
 }
 
 function getSettings() {
@@ -121,6 +128,7 @@ function getSettings() {
     orientation: data.get("orientation"),
     shadeWeekends: data.has("shadeWeekends"),
     showGrid: data.has("showGrid"),
+    holidaysText: holidaysInput ? holidaysInput.value : "",
   };
 }
 
@@ -149,7 +157,13 @@ function render() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
   updatePageSize(settings);
   updateStyle(settings);
-  output.replaceChildren(Calendar({ months, settings }));
+
+  const { holidays, errors } = parseHolidays(settings.holidaysText, settings.year);
+  if (holidaysHelp) {
+    holidaysHelp.textContent = errors.length > 0 ? errors.join(" · ") : "";
+  }
+
+  output.replaceChildren(Calendar({ months, settings, holidays }));
 
   const layout = getLayoutDefinition(settings.layout);
   const pageCount = getCalendarPageCount(settings.layout, months.length);
@@ -160,6 +174,7 @@ function render() {
 
 form.addEventListener("change", render);
 yearInput.addEventListener("input", render);
+if (holidaysInput) holidaysInput.addEventListener("input", render);
 resetButton.addEventListener("click", () => {
   localStorage.removeItem(STORAGE_KEY);
   applySettingsToForm(defaults);
