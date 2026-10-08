@@ -3,26 +3,28 @@ import {
   getCalendarTitle,
   getMonthSequence,
   parseHolidays,
-} from "./calendar.js";
+} from "./calendar.js?v=6";
 import {
   Calendar,
   getCalendarPageCount,
   getLayoutDefinition,
-} from "./components/calendar-components.js";
-import { createPrintController } from "./printing.js";
+} from "./components/calendar-components.js?v=6";
+import { createPrintController } from "./printing.js?v=6";
 import {
   CALENDAR_STYLES,
   DEFAULT_STYLE,
   getStyleDefinition,
   isValidStyle,
-} from "./styles.js";
+} from "./styles.js?v=6";
 
-const STORAGE_KEY = "paperday-settings-v1";
+const STORAGE_KEY = "paperday-settings-v2";
+const LEGACY_STORAGE_KEY = "paperday-settings-v1";
+const today = new Date();
 const defaults = {
   layout: "monthly",
   style: DEFAULT_STYLE,
-  year: 2026,
-  startMonth: 0,
+  year: today.getFullYear(),
+  startMonth: today.getMonth(),
   weekStart: "sunday",
   paper: "a4",
   orientation: "portrait",
@@ -73,18 +75,29 @@ export { parseHolidays };
 
 function loadSettings() {
   try {
-    const stored = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    const current = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    const stored = current ?? JSON.parse(localStorage.getItem(LEGACY_STORAGE_KEY));
     return {
       ...defaults,
       ...stored,
       style: normalizeStyle(stored?.style),
-      startMonth: normalizeStartMonth(stored?.startMonth),
+      startMonth: current
+        ? normalizeStartMonth(stored?.startMonth)
+        : defaults.startMonth,
+      year: current ? stored?.year ?? defaults.year : defaults.year,
     };
   } catch {
     return { ...defaults };
   }
 }
 
+function saveSettings(settings) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
+  } catch {
+    // Storage may be unavailable or full; rendering must still work.
+  }
+}
 function normalizeStartMonth(value) {
   if (value === null || value === undefined || value === "") return defaults.startMonth;
 
@@ -154,7 +167,6 @@ function updateStyle(settings) {
 function render() {
   const settings = getSettings();
   const months = getMonthSequence(settings.year, settings.startMonth);
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
   updatePageSize(settings);
   updateStyle(settings);
 
@@ -170,13 +182,19 @@ function render() {
   previewBadge.textContent = `${pageCount} ${pageCount === 1 ? "page" : "pages"}`;
   printSummary.textContent = `${settings.paper === "a4" ? "A4" : "Letter"} · ${settings.orientation} · ${pageCount} ${pageCount === 1 ? "page" : "pages"}`;
   layoutHelp.textContent = layout.description;
+  saveSettings(settings);
 }
 
 form.addEventListener("change", render);
 yearInput.addEventListener("input", render);
 if (holidaysInput) holidaysInput.addEventListener("input", render);
 resetButton.addEventListener("click", () => {
-  localStorage.removeItem(STORAGE_KEY);
+  try {
+    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(LEGACY_STORAGE_KEY);
+  } catch {
+    // Reset the visible form even when storage is unavailable.
+  }
   applySettingsToForm(defaults);
   render();
 });

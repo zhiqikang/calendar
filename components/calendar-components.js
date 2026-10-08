@@ -4,8 +4,8 @@ import {
   getCalendarTitle,
   getMonthGrid,
   getWeekdayLabels,
-} from "../calendar.js";
-import { DEFAULT_STYLE } from "../styles.js";
+} from "../calendar.js?v=6";
+import { DEFAULT_STYLE } from "../styles.js?v=6";
 
 /**
  * @typedef {{ year: number, month: number }} MonthReference

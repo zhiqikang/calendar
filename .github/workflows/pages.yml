@@ -28,7 +28,7 @@ jobs:
       - name: Prepare public files
         run: |
           mkdir -p _site/components
-          cp index.html app.js calendar.js printing.js screen.css print.css .nojekyll _site/
+          cp index.html app.js calendar.js printing.js styles.js screen.css print.css .nojekyll _site/
           cp components/calendar-components.js _site/components/
       - name: Upload site
         uses: actions/upload-pages-artifact@v5
